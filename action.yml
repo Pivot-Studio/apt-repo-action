@@ -36,6 +36,9 @@ inputs:
   debug:
     description: "Print debug log"
     required: false
+  github_repository:
+    description: "target github repository"
+    required: true
 runs:
   using: "docker"
   image: "Dockerfile"
