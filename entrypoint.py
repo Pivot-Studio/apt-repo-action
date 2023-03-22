@@ -186,11 +186,15 @@ if __name__ == '__main__':
     git_repo.config_writer().set_value(
         'user', 'email', '{}@users.noreply.github.com'.format(github_user)
     )
-
     git_repo.git.add('*')
     git_repo.index.commit(
         '[apt-action] Update apt repo\n\n\napt-action-metadata{}'.format(current_metadata_str)
     )
-    git_repo.git.push('--set-upstream', 'origin', gh_branch)
+    orphan_branch = 'tmp'
+    git_repo.head.reference = git.Head(git_repo, 'refs/heads/'+orphan_branch)
+    git_repo.index.commit("init", parent_commits=None)
+    git_repo.git.checkout(gh_branch)
+    git_repo.git.reset('--hard', orphan_branch)
+    git_repo.git.push('--set-upstream', 'origin', gh_branch,force=True)
 
     logging.info('-- Done saving changes --')
